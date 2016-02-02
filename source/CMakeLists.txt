@@ -135,11 +135,14 @@ set(MUPDF_LINK_LIBRARIES
   ${LibZ}
   )
 
-# Use local jpeg library
-include_directories(${CMAKE_SOURCE_DIR}/scripts/jpeg ${CMAKE_SOURCE_DIR}/thirdparty/jpeg)
-include_directories(${CMAKE_SOURCE_DIR}/scripts/openjpeg ${CMAKE_SOURCE_DIR}/thirdparty/openjpeg/libopenjpeg)
-# else
-# add_definitions(-DSHARE_JPEG)
+if(BUILD_JPEG_IGJ)
+  include_directories(${CMAKE_SOURCE_DIR}/scripts/jpeg ${CMAKE_SOURCE_DIR}/thirdparty/jpeg)
+endif(BUILD_JPEG_IGJ)
+if(BUILD_OPENJPEG)
+  include_directories(${CMAKE_SOURCE_DIR}/scripts/openjpeg ${CMAKE_SOURCE_DIR}/thirdparty/openjpeg/libopenjpeg)
+else(BUILD_OPENJPEG)
+  add_definitions(-DSHARE_JPEG)
+endif(BUILD_OPENJPEG)
 
 include_directories(${CMAKE_SOURCE_DIR}/thirdparty/mujs)
 

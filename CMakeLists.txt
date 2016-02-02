@@ -71,7 +71,7 @@ ENDMACRO(prepend_path)
 #
 
 SET(CMAKE_BUILD_TYPE RELEASE)
-#SET(CMAKE_VERBOSE_MAKEFILE TRUE)
+SET(CMAKE_VERBOSE_MAKEFILE ON)
 
 ####################################################################################################
 #
@@ -110,8 +110,11 @@ find_package(V8)
 find_library(LibZ z)
 
 # We build against third party
-# find_package(JPEG)
-# find_package(OpenJPEG2)
+find_package(JPEG)
+find_package(OpenJPEG2)
+
+SET(BUILD_JPEG_IGJ OFF)
+SET(BUILD_OPENJPEG OFF)
 
 # libjpeg.so.62 => /lib64/libjpeg.so.62 (0x00007fd65f5c1000)
 # libopenjp2.so.7 => /lib64/libopenjp2.so.7 (0x00007fd65f38c000)
@@ -127,16 +130,12 @@ include_directories(
   ${X11_X11_INCLUDE_PATH}
   ${CURL_INCLUDE_DIR}
   ${OPENSSL_INCLUDE_DIR}
+  ${OPENJPEG2_INCLUDE_DIR}
+  ${JPEG_INCLUDE_DIR}
+  )
+
+include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/include
-  )
-
-include_directories(
-  thirdparty/jpeg
-  thirdparty/openjpeg/libopenjpeg
-  )
-
-include_directories(
-  thirdparty/mujs
   )
 
 ####################################################################################################
@@ -146,7 +145,15 @@ include_directories(
 
 add_subdirectory(thirdparty)
 
-set(MUPDF_LINK_LOCAL_LIBRARIES jpeg-ijg openjpeg mujs)
+set(MUPDF_LINK_LOCAL_LIBRARIES mujs)
+
+if(BUILD_JPEG_IGJ)
+  set(MUPDF_LINK_LOCAL_LIBRARIES ${MUPDF_LINK_LOCAL_LIBRARIES} jpeg-ijg)
+endif(BUILD_JPEG_IGJ)
+if(BUILD_OPENJPEG)
+  set(MUPDF_LINK_LOCAL_LIBRARIES ${MUPDF_LINK_LOCAL_LIBRARIES} openjpeg)
+endif(BUILD_OPENJPEG)
+
 set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 
 ####################################################################################################
